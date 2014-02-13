@@ -35,6 +35,7 @@ require_once($CFG->dirroot . '/repository/lib.php');
 class repository_semantic_lo_url extends repository {
     private $mimetypes = array();
 
+
     /**
      * Semantic LO URL plugin constructor
      * @param int $repositoryid
@@ -81,6 +82,16 @@ class repository_semantic_lo_url extends repository {
      * @return array
      */
     public function print_login($ajax = true) {
+        global $PAGE;
+        
+        //https://moodle.org/mod/forum/discuss.php?d=169124
+        //$PAGE->requires->js('/local/tokenizer.min.js', true);
+        
+        //$popup_btn = new stdClass();
+        //$popup_btn->type = 'popup';
+        //$popup_btn->url = "http://www.google.com";
+
+        
         $ret = array();
         
         $url = new stdClass();
@@ -95,10 +106,12 @@ class repository_semantic_lo_url extends repository {
         $title->name = 'title';
         $title->label = get_string('title', 'repository_semantic_lo_url').': ';
         
+
         $ret['login'] = array($url, $title);
         $ret['login_btn_label'] = get_string('URL');
         //$ret['login_btn_action'] = 'process_url';
         $ret['allowcaching'] = false; // indicates that login form can be cached in filepicker.js
+        
         return $ret;
     }
     
@@ -108,12 +121,30 @@ class repository_semantic_lo_url extends repository {
      */
     public function get_listing($path = '', $page = '') {
         global $CFG, $OUTPUT;
+        
         $ret = array();
+        //$ret['help']  = "http://example.com";
+        //$ret['manage']  = 'http://www.example.com';        
         $ret['nologin']  = true;
         $ret['nosearch'] = true;
         $ret['norefresh'] = true;
         $ret['list'] = $this->process_url($this->url, $this->title);
-        $ret['allowcaching'] = false; // indicates that result of get_listing() can be cached in filepicker.js
+        $ret['allowcaching'] = false; // indicates that result of get_listing() can be cached in filepicker.js   
+                
+        //////////
+        
+        $callbackurl = new moodle_url('/repository/semantic_lo_upload/callback.php', array('repo_id'=>$this->id));
+
+        $url = $this->get_option('semantic_lo_service')
+                . 'addmetadata?uri='.$this->url
+                . '&returnurl='.urlencode($callbackurl);        
+        
+        $ret['object'] = array();
+        $ret['object']['type'] = 'text/html';
+        $ret['object']['src'] = $url;     
+        
+        ///////////
+        
         return $ret;
     }
    
