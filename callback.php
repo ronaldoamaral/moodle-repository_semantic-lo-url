@@ -23,39 +23,43 @@
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 require_once(dirname(dirname(dirname(__FILE__))).'/config.php');
-$json = required_param('tlelinks', PARAM_RAW);
+$json = required_param('data', PARAM_RAW);
 
 require_login();
 
-$decodedinfo = json_decode($json);
-$info = array_pop($decodedinfo);
+###########
+########## Problema ao Decodificar o JSON que estou passando
+ #########
 
-$url = '';
-if (isset($info->url)) {
-    $url = s(clean_param($info->url, PARAM_URL));
+$info = json_decode($json);
+
+//$info = array_pop($decodedinfo);
+
+$source = '';
+if (isset($info->{'url'})) {
+    $source = s(clean_param($info->{'url'}, PARAM_URL));
 }
 
 $filename = '';
-if (isset($info->name)) {
-    $filename  = s(clean_param($info->name, PARAM_FILE));
+if (isset($info->{'title'})) {
+    $filename  = s(clean_param($info->{'title'}, PARAM_FILE));
 }
 
 $thumbnail = '';
-if (isset($info->thumbnail)) {
-    $thumbnail = s(clean_param($info->thumbnail, PARAM_URL));
+if (isset($info->{'thumbnail'})) {
+    $thumbnail = s(clean_param($info->{'thumbnail'}, PARAM_URL));
 }
 
 $author = '';
-if (isset($info->owner)) {
-    $author = s(clean_param($info->owner, PARAM_NOTAGS));
+if (isset($info->{'owner'})) {
+    $author = s(clean_param($info->{'owner'}, PARAM_NOTAGS));
 }
 
 $license = '';
-if (isset($info->license)) {
-    $license = s(clean_param($info->license, PARAM_ALPHAEXT));
+if (isset($info->{'license'})) {
+    $license = s(clean_param($info->{'license'}, PARAM_ALPHAEXT));
 }
 
-$source = base64_encode(serialize((object)array('url'=>$url,'filename'=>$filename)));
 
 $js =<<<EOD
 <html>

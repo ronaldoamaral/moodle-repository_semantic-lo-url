@@ -47,6 +47,7 @@ class repository_semantic_lo_url extends repository {
         $this->semantic_lo_service = $this->get_option('semantic_lo_service');
         $this->semantic_lo_repository = $this->get_option('semantic_lo_repository');
         $this->url = optional_param('url', '', PARAM_RAW);
+        $this->uri = optional_param('uri', '', PARAM_RAW);
         $this->title = optional_param('title', '', PARAM_RAW);
     }
      /**
@@ -132,12 +133,15 @@ class repository_semantic_lo_url extends repository {
         $ret['allowcaching'] = false; // indicates that result of get_listing() can be cached in filepicker.js   
                 
         //////////
+        $json_txt = array('title'=>$this->title,'url'=>$this->url);
+        $json = json_encode($json_txt);
         
-        $callbackurl = new moodle_url('/repository/semantic_lo_upload/callback.php', array('repo_id'=>$this->id));
+        $callbackurl = new moodle_url('/repository/semantic_lo_url/callback.php', array('repo_id'=>$this->id));
+        $callbackurl .= '&data=' .$json;
 
         $url = $this->get_option('semantic_lo_service')
-                . 'addmetadata?uri='.$this->url
-                . '&returnurl='.urlencode($callbackurl);        
+                . 'addmetadata?uri='.$this->uri
+                . '&callback='.urlencode($callbackurl);        
         
         $ret['object'] = array();
         $ret['object']['type'] = 'text/html';
@@ -169,6 +173,7 @@ class repository_semantic_lo_url extends repository {
        
             $data = array('title'=>$title, 'identifier'=>$url);         
             $this->_add_lo_repository($data);
+            
         
             //
             $list[] = array(
@@ -202,6 +207,8 @@ class repository_semantic_lo_url extends repository {
                 
         $results = json_decode($resp, true);
         
+        $this->uri = $results['data']['uri'];
+                
         return $results;
     }
 
