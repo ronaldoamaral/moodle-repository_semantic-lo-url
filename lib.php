@@ -202,7 +202,13 @@ class repository_semantic_lo_url extends repository {
         
         $c = new curl();
        
-        $postdata = format_postdata_for_curlcall($data);
+        /* $postdata = format_postdata_for_curlcall($data); */
+        
+        $postdata = json_encode($data);
+        
+        $param = array('HEADER'=>"Content-Type: application/json");
+
+        $c->setHeader($param);
         
         $resp = $c->post($this->add_url, $postdata);
                 
