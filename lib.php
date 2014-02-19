@@ -136,12 +136,13 @@ class repository_semantic_lo_url extends repository {
         $json_txt = array('title'=>$this->title,'url'=>$this->url);
         $json = json_encode($json_txt);
         
+        
         $callbackurl = new moodle_url('/repository/semantic_lo_url/callback.php', array('repo_id'=>$this->id));
-        $callbackurl .= '&data=' .$json;
+        $callbackurl .= '&data=' .base64_encode($json);
 
         $url = $this->get_option('semantic_lo_service')
                 . 'addmetadata?uri='.$this->uri
-                . '&callback='.urlencode($callbackurl);        
+                . '&callback='.urlencode($callbackurl);
         
         $ret['object'] = array();
         $ret['object']['type'] = 'text/html';

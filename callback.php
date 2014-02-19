@@ -27,11 +27,7 @@ $json = required_param('data', PARAM_RAW);
 
 require_login();
 
-###########
-########## Problema ao Decodificar o JSON que estou passando
- #########
-
-$info = json_decode($json);
+$info = json_decode(base64_decode($json));
 
 //$info = array_pop($decodedinfo);
 
@@ -66,7 +62,7 @@ $js =<<<EOD
 <head>
    <meta http-equiv="content-type" content="text/html; charset=utf-8" />
     <script type="text/javascript">
-    window.onload = function() {
+    window.onload = function() {       
         var resource = {};
         resource.title = "$filename";
         resource.source = "$source";
@@ -74,6 +70,7 @@ $js =<<<EOD
         resource.author = "$author";
         resource.license = "$license";
         parent.M.core_filepicker.select_file(resource);
+
     }
     </script>
 </head>
